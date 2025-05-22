@@ -1,32 +1,51 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
+# === Compilação geral (C/C++) ===
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
 *.so
-*.dylib
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
+*.exe
+*.out
 *.a
 *.lib
 
-# Executables
-*.exe
-*.out
-*.app
+# === CMake ===
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+build/
+_build/
+out/
+Debug/
+Release/
+
+# Ninja build files
+.ninja
+.ninja_deps
+.ninja_log
+
+# CLion / CMake IDE files
+.idea/
+*.iml
+
+# === vcpkg ===
+vcpkg_installed/
+vcpkg_buildtrees/
+vcpkg_packages/
+vcpkg_downloads/
+
+# Se você clonar o vcpkg dentro do projeto:
+vcpkg/
+
+# Logs
+*.log
+
+# === VSCode ===
+.vscode/
+
+# === Outros ===
+*.DS_Store
+Thumbs.db
+*.tmp
+flow.txt
+structure.txt
