@@ -11,9 +11,13 @@
 
 // Function to change the current server port
 namespace Services {
+    void connectToServerAsConfig();
+    void connectToServerDirect(int port);
+    void disconnectFromServer(AppServer& server);
     void startServerMode(AppServer& server);
+    void stopServerMode(AppServer& server);
     void startClientMode();
-    void checkConnection();
+    void checkConnection(AppServer& server);
     void changeCurrentPort(AppServer& server);
     void changeTargetPort(AppServer& server);
     void editUsername();

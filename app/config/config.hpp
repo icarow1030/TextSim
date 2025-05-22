@@ -17,6 +17,12 @@ namespace Config {
         ERROR_AT_CONNECTION
     };
 
+    enum class ServerStatus {
+        ONLINE,
+        OFFLINE,
+        ERROR_
+    };
+
     namespace Default {
         inline constexpr const char* USERNAME = "Anonymous";
         inline constexpr const char* MESSAGE = "Hello, World!";

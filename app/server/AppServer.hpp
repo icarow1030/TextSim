@@ -3,6 +3,7 @@
 #include "../config/config.hpp"
 #include <string>
 #include <iostream>
+#include <thread>
 
 class AppServer {
 
@@ -11,13 +12,18 @@ class AppServer {
 
         void start();
         void stop();
+        void setupRoutes();
         int getPort() const;
         void updatePort();
-        Config::Connection status();
+        Config::ServerStatus status();
+        inline httplib::Server& getServer() {
+            return server;
+        };
 
     private:
         httplib::Server server;
-        Config::Connection connection_status;
+        Config::ServerStatus server_status;
         int port;
         std::string host;
+        std::thread server_thread;
 };

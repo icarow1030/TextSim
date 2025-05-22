@@ -18,19 +18,21 @@
 using namespace httplib;
 using namespace Config;
 
-Config::Connection connection_status = Config::Connection::DISCONNECTED;
-
 // Function to clear the terminal screen
 void clearTerminal() {
     std::system(CLEAR_COMMAND);
 }
 
+bool isServerOnline(AppServer& server) {
+    return server.status() == Config::ServerStatus::ONLINE;
+}
+
 
 // Show main menu
-void showMenu() {
+void showMenu(AppServer& server) {
     std::cout << "\n==== MAIN MENU ====" << std::endl;
-    std::cout << "[1] " << (connection_status == Config::Connection::CONNECTED ? "Disconnect" : "Connect") << std::endl;
-    std::cout << "[2] Start Server Mode" << std::endl;
+    std::cout << "[1] " << (isServerOnline(server) ? "Disconnect from Target Port" : "Connect to Target Port") << std::endl;
+    std::cout << "[2] " << (isServerOnline(server) ? "Stop Server Mode" : "Start Server Mode") << std::endl;
     std::cout << "[3] Start Client Mode (Chat)" << std::endl;
     std::cout << "[4] Connection Settings" << std::endl;
     std::cout << "[5] User Settings" << std::endl;
@@ -61,21 +63,25 @@ int main() {
     int option = -1;
     while (option != 0) {
         clearTerminal(); // Clear terminal at each menu display
-        showMenu();
+        showMenu(server);
         std::cout << "Choose an option: ";
         std::cin >> option;
         switch (option) {
             case 1:
-                if (connection_status == Config::Connection::CONNECTED) {
+                if (isServerOnline(server)) {
                     std::cout << "Disconnecting..." << std::endl;
-                    connection_status = Config::Connection::DISCONNECTED;
                 } else {
                     std::cout << "Connecting..." << std::endl;
-                    connection_status = Config::Connection::CONNECTED;
                 }
                 break;
-            case 2:
-                std::cout << "Starting server mode..." << std::endl;
+            case 2: 
+                if(isServerOnline(server)) {
+                    std::cout << "Stopping server mode..." << std::endl;
+                    Services::stopServerMode(server);
+                } else {
+                    std::cout << "Starting server mode..." << std::endl;
+                    Services::startServerMode(server);
+                }
                 break;
             case 3:
                 std::cout << "Starting client mode (chat)..." << std::endl;
@@ -101,6 +107,7 @@ int main() {
                             break;
                         case 3:
                             std::cout << "Checking connection..." << std::endl;
+                            Services::checkConnection(server);
                             break;
                         case 0:
                             break;

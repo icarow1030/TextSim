@@ -5,10 +5,11 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <thread>
 
 using namespace httplib;
 
-AppServer::AppServer() : connection_status(Config::Connection::DISCONNECTED), port(Config::Server::PORT), host(Config::Server::HOST) {
+AppServer::AppServer() : server_status(Config::ServerStatus::OFFLINE), port(Config::Server::PORT), host(Config::Server::HOST) {
 
 }
 
@@ -20,21 +21,43 @@ void AppServer::updatePort() {
     port = Config::Server::PORT;
 }
 
+void AppServer::setupRoutes() {
+
+    server.Get("/", [](const Request& req, Response& res) {
+        res.set_content("Welcome to the server!", "text/plain");
+    });
+
+    server.Get("/checkConnection", [](const Request& req, Response& res) {
+        res.set_content("Server is running", "text/plain");
+    });
+}
+
 void AppServer::start() {
     try {
-        server.listen(host, port);
+        setupRoutes();
+
+        server_thread = std::thread([this]() {
+            try {
+                server.listen(host, port);
+            } catch(const std::exception& e) {
+                std::cerr << "Error in server thread: " << e.what() << std::endl;
+                server_status = Config::ServerStatus::OFFLINE;
+            }
+        });
+        server_status = Config::ServerStatus::ONLINE;
+        server_thread.detach();
     } catch(const std::exception& e) {
         std::cerr << "Error starting server: " << e.what() << std::endl;
-        connection_status = Config::Connection::ERROR_AT_CONNECTION;
+        server_status = Config::ServerStatus::ERROR_;
         return;
     }
 }
 
 void AppServer::stop() {
     server.stop();
-    connection_status = Config::Connection::DISCONNECTED;
+    server_status = Config::ServerStatus::OFFLINE;
 }
 
-Config::Connection AppServer::status() {
-    return connection_status;
+Config::ServerStatus AppServer::status() {
+    return server_status;
 }
