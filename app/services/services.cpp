@@ -2,9 +2,26 @@
 #include "../config/config.hpp"
 #include <httplib.h>
 
+void Services::connectToTargetAsConfig() {
+    int port = Config::Server::PORT;
+    std::string host = Config::Server::HOST;
+    std::cout << "Trying Connecting to target server at " << Config::get_target_url() << std::endl;
+}
 
-void Services::checkConnection(AppServer& server) {
-    std::cout << "Checking connection..." << std::endl;
+void Services::connectToTargetDirect(int port) {
+    std::string host = Config::Server::HOST;
+    std::cout << "Trying Connecting to target server at " << host << ":" << port << std::endl;
+}
+
+void Services::connectToTargetDirect(int port, const std::string& host) {
+    
+}
+
+void Services::disconnectFromServer(AppServer& server) {
+
+}
+
+void Services::checkServerStatus(AppServer& server) {
     httplib::Client client(Config::Server::HOST, server.getPort());
 
     if(server.status() == Config::ServerStatus::ONLINE) {
@@ -47,9 +64,17 @@ void Services::stopServerMode(AppServer& server) {
     try {
         server.stop();
         std::cout << "Server stopped." << std::endl;
+        // Atualiza o port do AppServer após parar, para sincronizar com o config
+        server.updatePort(Config::Server::PORT);
+        std::cout << "Server port updated to: " << server.getPort() << std::endl;
     } catch(const std::exception& e) {
         std::cerr << "Error stopping server: " << e.what() << std::endl;
     }
+}
+
+void Services::startClientMode() {
+    std::cout << "Starting client mode (chat)..." << std::endl;
+    // Implement client mode logic here
 }
 
 // Function to change the current server port
@@ -66,8 +91,22 @@ void Services::changeCurrentPort(AppServer& server) {
     } else {
         std::cout << "Server not started." << std::endl;
     }
+    int new_port;
     std::cout << "Enter new port: ";
-    std::cin >> Config::Server::PORT;
+    while (!(std::cin >> new_port)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid input. Enter a valid port: ";
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "CHEGA AQUI" << new_port << std::endl;
+    Config::set_port(new_port);
+
+    if(server.status() == Config::ServerStatus::OFFLINE) {
+        server.updatePort(new_port);
+        std::cout << "Server port updated to: " << server.getPort() << std::endl;
+    }
+
     if(server.status() == Config::ServerStatus::ONLINE && server.getPort() != Config::Server::PORT) {
         std::cout << "Server port is different from current port." << std::endl;
         char choice;
@@ -75,7 +114,7 @@ void Services::changeCurrentPort(AppServer& server) {
             std::cout << "Update server port? (y/n): ";
             std::cin >> choice;
             if (choice == 'y' || choice == 'Y') {
-                server.updatePort();
+                server.updatePort(Config::Server::PORT);
                 std::cout << "Server port updated to: " << server.getPort() << std::endl;
             } else {
                 std::cout << "Server port not updated." << std::endl;
@@ -83,4 +122,47 @@ void Services::changeCurrentPort(AppServer& server) {
         } while(choice != 'y' && choice != 'n');
     }
     std::cout << "Port updated: " << Config::Server::PORT << std::endl;
+}
+
+void Services::changeTargetPort(AppServer& server) {
+    std::cout << "Current target port: " << Config::Server::TARGER_PORT;
+    if(Config::Server::TARGER_PORT == Config::Default::TARGET_PORT) {
+        std::cout << " (Default)" << std::endl;
+    } else {
+        std::cout << std::endl;
+    }
+    std::cout << "Enter new target port: ";
+    int new_port;
+    while (!(std::cin >> new_port)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid input. Enter a valid port: ";
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    Config::set_target_port(new_port);
+    std::cout << "Target port updated to: " << Config::Server::TARGER_PORT << std::endl;
+}
+
+void Services::editUsername() {
+    std::cout << "Current username: " << Config::User::USERNAME << std::endl;
+    std::cout << "Enter new username: ";
+    std::string new_username;
+    std::cin >> new_username;
+    try {
+        Config::set_username(new_username);
+        std::cout << "Username updated to: " << Config::User::USERNAME << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error updating username: " << e.what() << std::endl;
+    }
+}
+
+void Services::generateRSAKeys() {
+    std::cout << "Generating RSA keys..." << std::endl;
+}
+
+void Services::showPortsInfo(AppServer& server) {
+    std::cout << "\n--- Ports Info ---" << std::endl;
+    std::cout << "Config::Server::PORT: " << Config::Server::PORT << std::endl;
+    std::cout << "Config::Server::TARGER_PORT: " << Config::Server::TARGER_PORT << std::endl;
+    std::cout << "Server (runtime) port: " << server.getPort() << std::endl;
 }

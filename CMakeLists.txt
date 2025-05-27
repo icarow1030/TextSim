@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(TextSim 
     app/main.cpp
     app/chat/chat.cpp
-    app/client/client.cpp
+    app/client/AppClient.cpp
     app/server/AppServer.cpp
     app/services/services.cpp
 )

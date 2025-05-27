@@ -5,16 +5,19 @@
 #include <iostream>
 #include <thread>
 
+// Forward declaration for Chat
+class Chat;
+
 class AppServer {
 
     public:
-        AppServer();
+        AppServer(Chat& chatRef);
 
         void start();
         void stop();
         void setupRoutes();
         int getPort() const;
-        void updatePort();
+        void updatePort(int new_port);
         Config::ServerStatus status();
         inline httplib::Server& getServer() {
             return server;
@@ -26,4 +29,7 @@ class AppServer {
         int port;
         std::string host;
         std::thread server_thread;
+        Chat& chat; // Add Chat reference as a member
+
+        void handleMessage(const httplib::Request& req);
 };

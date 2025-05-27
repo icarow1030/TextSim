@@ -1,13 +1,16 @@
 #include <httplib.h>
 #include "config/config.hpp"
-#include "client/client.hpp"
+#include "client/AppClient.hpp"
 #include "server/AppServer.hpp"
 #include "cryptography/rsa.hpp"
 #include "services/services.hpp"
+#include <gmp.h>
+#include "chat/chat.hpp"
 
 #include <iostream>
 #include <string>
 #include <cstdlib> // For system()
+#include <memory>
 
 #ifdef _WIN32
 #define CLEAR_COMMAND "cls"
@@ -33,7 +36,7 @@ void showMenu(AppServer& server) {
     std::cout << "\n==== MAIN MENU ====" << std::endl;
     std::cout << "[1] " << (isServerOnline(server) ? "Disconnect from Target Port" : "Connect to Target Port") << std::endl;
     std::cout << "[2] " << (isServerOnline(server) ? "Stop Server Mode" : "Start Server Mode") << std::endl;
-    std::cout << "[3] Start Client Mode (Chat)" << std::endl;
+    std::cout << "[3] Start Client Mode (Chat)" << std::endl; // Ao ser chamada, define informações do cliente
     std::cout << "[4] Connection Settings" << std::endl;
     std::cout << "[5] User Settings" << std::endl;
     std::cout << "[0] Exit" << std::endl;
@@ -44,7 +47,8 @@ void connectionSettingsMenu() {
     std::cout << "\n-- Connection Settings --" << std::endl;
     std::cout << "[1] Change Destination Port" << std::endl;
     std::cout << "[2] Change Current Port" << std::endl;
-    std::cout << "[3] Check Connection" << std::endl;
+    std::cout << "[3] Show Ports Info" << std::endl;
+    std::cout << "[4] Check Server Status" << std::endl;
     std::cout << "[0] Back" << std::endl;
 }
 
@@ -58,33 +62,36 @@ void userSettingsMenu() {
 
 int main() {
     // Server instance
-    AppServer server;
+    std::cout << "Welcome to " << Config::APP_NAME << " v" << Config::APP_VERSION << " by " << Config::APP_AUTHOR << std::endl;
+    Chat chat;
+    std::cout << "Initializing chat..." << std::endl;
+    AppServer server(chat);
+    std::cout << "Server..." << std::endl;
+    AppClient client;
+    std::cout << "Client..." << std::endl;
+    client.setServerPtr(&server); // Set the server pointer in the client
 
     int option = -1;
     while (option != 0) {
+        std::cout << "\nteste1" << std::endl;
+        client.generateClient(); // Ensure client is generated with server information
+        std::cout << "teste2" << std::endl;
         clearTerminal(); // Clear terminal at each menu display
         showMenu(server);
         std::cout << "Choose an option: ";
         std::cin >> option;
         switch (option) {
             case 1:
-                if (isServerOnline(server)) {
-                    std::cout << "Disconnecting..." << std::endl;
-                } else {
-                    std::cout << "Connecting..." << std::endl;
-                }
+                std::cout << (isServerOnline(server) ? "Disconnecting..." : "Connecting...") << std::endl;
+                (isServerOnline(server)) ? Services::disconnectFromServer(server) : Services::connectToTargetAsConfig();
                 break;
             case 2: 
-                if(isServerOnline(server)) {
-                    std::cout << "Stopping server mode..." << std::endl;
-                    Services::stopServerMode(server);
-                } else {
-                    std::cout << "Starting server mode..." << std::endl;
-                    Services::startServerMode(server);
-                }
+                std::cout << (isServerOnline(server) ? "Stopping server mode..." : "Starting server mode...") << std::endl;
+                (isServerOnline(server)) ? Services::stopServerMode(server) : Services::startServerMode(server);
                 break;
             case 3:
                 std::cout << "Starting client mode (chat)..." << std::endl;
+                chat.chat(client);
                 break;
             case 4: {
                 int suboption = -1;
@@ -96,23 +103,39 @@ int main() {
                     switch (suboption) {
                         case 1:
                             std::cout << "Change Destination Port..." << std::endl;
+                            Services::changeTargetPort(server);
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            std::cout << "\nPress ENTER to continue...";
+                            std::cin.get();
                             break;
                         case 2:
                             std::cout << "Change Current Port..." << std::endl;
-                            try {
-                                Services::changeCurrentPort(server);
-                            } catch(const std::exception& e) {
-                                std::cerr << "Error: " << e.what() << std::endl;
-                            }
+                            Services::changeCurrentPort(server);
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            std::cout << "\nPress ENTER to continue...";
+                            std::cin.get();
                             break;
                         case 3:
-                            std::cout << "Checking connection..." << std::endl;
-                            Services::checkConnection(server);
+                            std::cout << "Showing ports info..." << std::endl;
+                            Services::showPortsInfo(server);
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            std::cout << "\nPress ENTER to continue...";
+                            std::cin.get();
+                            break;
+                        case 4:
+                            std::cout << "Checking server status..." << std::endl;
+                            Services::checkServerStatus(server);
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            std::cout << "\nPress ENTER to continue...";
+                            std::cin.get();
                             break;
                         case 0:
                             break;
                         default:
                             std::cout << "Invalid option!" << std::endl;
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            std::cout << "\nPress ENTER to continue...";
+                            std::cin.get();
                     }
                 }
                 break;
@@ -127,9 +150,11 @@ int main() {
                     switch (suboption) {
                         case 1:
                             std::cout << "Edit username..." << std::endl;
+                            Services::editUsername();
                             break;
                         case 2:
                             std::cout << "Generating RSA keys..." << std::endl;
+                            Services::generateRSAKeys();
                             break;
                         case 0:
                             break;
@@ -146,8 +171,8 @@ int main() {
                 std::cout << "Invalid option!" << std::endl;
         }
         if(option != 0) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "\nPress ENTER to continue...";
-            std::cin.ignore();
             std::cin.get();
         }
     }

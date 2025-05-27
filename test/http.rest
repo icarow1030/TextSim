@@ -1,3 +1,8 @@
-
 ###
-GET http://localhost:8070/checkConnection
+POST http://localhost:8070/message
+Content-Type: application/json
+
+{
+  "username": "Olá, servidor!",
+  "content": "Olá, mundo!"
+}

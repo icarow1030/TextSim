@@ -23,21 +23,27 @@ namespace Config {
         ERROR_
     };
 
+    enum class ClientStatus {
+        ONLINE,
+        OFFLINE,
+        ERROR_
+    };
+
     namespace Default {
         inline constexpr const char* USERNAME = "Anonymous";
         inline constexpr const char* MESSAGE = "Hello, World!";
         inline constexpr int PORT = 8070;
+        inline constexpr int TARGET_PORT = 8071;
     }
 
     namespace User {
         inline static std::string USERNAME = Default::USERNAME;
-
     }
 
     namespace Server {
         inline static int PORT = Default::PORT;
         inline constexpr const char* HOST = "localhost";
-        inline static int TARGER_PORT;
+        inline static int TARGER_PORT = Default::TARGET_PORT;
         inline constexpr const char* TARGET_HOST = "localhost";
     }
 
