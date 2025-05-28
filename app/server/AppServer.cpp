@@ -77,18 +77,18 @@ Config::ServerStatus AppServer::status() {
 }
 
 void AppServer::handleMessage(const Request& req) {
-    // Handle incoming messages
     try {
-        auto json_body = nlohmann::json::parse(req.body);
-        std::string message = json_body.value("content", "");
-        if (message.empty()) {
-            throw std::invalid_argument("Message cannot be empty");
+        auto json_body = json::parse(req.body);
+        if(json_body["content"].empty()) {
+            throw std::invalid_argument("Empty message");
         }
-        // Verificação e autenticação
-        // Caso passe na autenticação, armazena a mensagem chamando o "addMessage" do Chat
-        chat.addMessage(json_body);
-    } catch (const std::exception& e) {
-        std::cerr << "Error parsing message: " << e.what() << std::endl;
-        throw;
+        
+        // Verifica se a mensagem não é do próprio usuário
+        if(json_body["username"] != Config::User::USERNAME) {
+            chat.addMessage(json_body);
+        }
+        
+    } catch(const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 }

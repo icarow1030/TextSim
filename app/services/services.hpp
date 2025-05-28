@@ -3,6 +3,8 @@
 #include "../cryptography/rsa.hpp"
 #include <memory>
 #include <iostream>
+#include <nlohmann/json.hpp> // For JSON parsing
+#include "../chat/chat.hpp"
 
 // - Start Server Mode
 // - Start Client Mode (Chat)
@@ -24,7 +26,8 @@ namespace Services {
     void checkServerStatus(AppServer& server); // Done
     void changeCurrentPort(AppServer& server); // Done
     void changeTargetPort(AppServer& server);
-    void editUsername();
+    void editUsername(Chat& chat);
     void generateRSAKeys();
     void showPortsInfo(AppServer& server);
+    void generateUserId();
 }

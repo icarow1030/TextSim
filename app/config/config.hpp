@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
+#include "../cryptography/rsa.hpp"
 
 namespace Config {
 
@@ -32,18 +33,21 @@ namespace Config {
     namespace Default {
         inline constexpr const char* USERNAME = "Anonymous";
         inline constexpr const char* MESSAGE = "Hello, World!";
-        inline constexpr int PORT = 8070;
-        inline constexpr int TARGET_PORT = 8071;
+        inline constexpr int PORT = 8071;
+        inline constexpr int TARGET_PORT = 8070;
     }
 
     namespace User {
-        inline static std::string USERNAME = Default::USERNAME;
+        extern std::string USERNAME;
+        inline std::string USER_ID;
+        inline RSA::PublicKey PUBLIC_KEY;
+        inline RSA::PrivateKey PRIVATE_KEY;
     }
 
     namespace Server {
-        inline static int PORT = Default::PORT;
+        extern int PORT;
         inline constexpr const char* HOST = "localhost";
-        inline static int TARGER_PORT = Default::TARGET_PORT;
+        extern int TARGER_PORT;
         inline constexpr const char* TARGET_HOST = "localhost";
     }
 

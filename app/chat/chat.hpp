@@ -3,6 +3,9 @@
 #include <nlohmann/json.hpp>
 #include "../config/config.hpp"
 #include <thread>
+#include "style.hpp"
+#include "../cryptography/rsa.hpp"
+#include "../cryptography/sha256.hpp"
 
 // Forward declaration for AppClient
 class AppClient;
@@ -19,10 +22,12 @@ using namespace nlohmann;
 
 class Chat {
     public:
-        void addMessage(const json& message);
+        void addMessage(const json& message, bool is_local = false);
         void printMessages() const;
         void chat(AppClient& client);
         void clearTerminal() const;
+        json getMessages() const;
+        void changeUsernames(const std::string& new_username);
     private:
         std::vector<json> messages;
         bool isMe(const json& message) const {

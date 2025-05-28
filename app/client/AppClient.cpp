@@ -13,24 +13,21 @@ AppClient::AppClient() {}
 
 //};
 
-void AppClient::sendMessage(json message) {
-    if(client == nullptr) {
-        std::cerr << "Client not initialized. Call generateClient() first." << std::endl;
-        return;
-    }
+httplib::Result AppClient::sendMessage(json message) {
+    httplib::Client client(Config::Server::TARGET_HOST, Config::Server::TARGER_PORT);
     std::string body = message.dump();
+    if (body.empty()) {
+        std::cerr << "Message body is empty. Cannot send." << std::endl;
+        return httplib::Result(nullptr, httplib::Error::Unknown);
+    }
     httplib::Headers headers = { {"Content-Type", "application/json"} };
-    auto res = client->Post("/message", headers, body, "application/json");
+    auto res = client.Post("/message", headers, body, "application/json");
     if (res && res->status == 200) {
-        std::cout << "Message sent successfully!" << std::endl;
-    } else if (res) {
+    } else if(res) {
         std::cerr << "Failed to send message. Status: " << res->status << std::endl;
     } else {
         std::cerr << "Failed to send message. No response received." << std::endl;
     }
-}
-
-void AppClient::generateClient() {
-    client = std::make_unique<httplib::Client>(Config::Server::HOST, server_ptr->getPort());
+    return res;
 }
 

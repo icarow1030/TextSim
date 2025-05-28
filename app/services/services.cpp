@@ -1,6 +1,7 @@
 #include "services.hpp"
 #include "../config/config.hpp"
 #include <httplib.h>
+#include <gmp.h>
 
 void Services::connectToTargetAsConfig() {
     int port = Config::Server::PORT;
@@ -143,7 +144,7 @@ void Services::changeTargetPort(AppServer& server) {
     std::cout << "Target port updated to: " << Config::Server::TARGER_PORT << std::endl;
 }
 
-void Services::editUsername() {
+void Services::editUsername(Chat& chat) {
     std::cout << "Current username: " << Config::User::USERNAME << std::endl;
     std::cout << "Enter new username: ";
     std::string new_username;
@@ -154,10 +155,21 @@ void Services::editUsername() {
     } catch (const std::exception& e) {
         std::cerr << "Error updating username: " << e.what() << std::endl;
     }
+    chat.changeUsernames(Config::User::USERNAME);
 }
 
 void Services::generateRSAKeys() {
     std::cout << "Generating RSA keys..." << std::endl;
+    try {
+        RSA::Keys keys = RSA::generate_keys();
+        Config::User::PUBLIC_KEY.n = keys.public_key.n;
+        Config::User::PUBLIC_KEY.e = keys.public_key.e;
+        Config::User::PRIVATE_KEY.n = keys.private_key.n;
+        Config::User::PRIVATE_KEY.d = keys.private_key.d;
+    } catch(const std::exception& e) {
+        std::cerr << "Error generating RSA keys: " << e.what() << std::endl;
+    }
+
 }
 
 void Services::showPortsInfo(AppServer& server) {
@@ -165,4 +177,13 @@ void Services::showPortsInfo(AppServer& server) {
     std::cout << "Config::Server::PORT: " << Config::Server::PORT << std::endl;
     std::cout << "Config::Server::TARGER_PORT: " << Config::Server::TARGER_PORT << std::endl;
     std::cout << "Server (runtime) port: " << server.getPort() << std::endl;
+}
+
+void Services::generateUserId() {
+    std::stringstream ss;
+    std::random_device rd;
+    for(int i = 0; i < 16; ++i) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << rd() % 256;
+    }
+    Config::User::USER_ID = ss.str();
 }

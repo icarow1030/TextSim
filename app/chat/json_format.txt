@@ -1,0 +1,6 @@
+json:
+    - user_id
+    - username
+    - content
+    - pub_key
+    - hash
