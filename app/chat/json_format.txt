@@ -3,4 +3,4 @@ json:
     - username
     - content
     - pub_key
-    - hash
+    - hash (user_id + username + content)

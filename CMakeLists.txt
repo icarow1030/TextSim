@@ -19,6 +19,7 @@ add_executable(TextSim
     app/config/config.cpp
     app/cryptography/rsa.cpp
     app/cryptography/sha256.cpp
+    app/cryptography/base64.cpp
 )
 
 target_link_libraries(TextSim PRIVATE

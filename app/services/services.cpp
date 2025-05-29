@@ -1,57 +1,59 @@
 #include "services.hpp"
-#include "../config/config.hpp"
-#include <httplib.h>
-#include <gmp.h>
+
+
+#ifdef _WIN32
+#include <windows.h>
+#define CLEAR_COMMAND "cls"
+#else
+#define CLEAR_COMMAND "clear"
+#endif
 
 void Services::connectToTargetAsConfig() {
-    int port = Config::Server::PORT;
-    std::string host = Config::Server::HOST;
-    std::cout << "Trying Connecting to target server at " << Config::get_target_url() << std::endl;
+    std::cout << "Connecting to target server at " << Config::get_target_url() << std::endl;
 }
 
 void Services::connectToTargetDirect(int port) {
-    std::string host = Config::Server::HOST;
-    std::cout << "Trying Connecting to target server at " << host << ":" << port << std::endl;
+    std::cout << "Connecting to target server at " << Config::Server::HOST << ":" << port << std::endl;
 }
 
 void Services::connectToTargetDirect(int port, const std::string& host) {
-    
+    std::cout << "Connecting to target server at " << host << ":" << port << std::endl;
 }
 
 void Services::disconnectFromServer(AppServer& server) {
-
+    server.stop();
+    std::cout << "Disconnected from server." << std::endl;
 }
 
 void Services::checkServerStatus(AppServer& server) {
+    clearTerminal();
+    std::cout << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "|" << TerminalStyle::BG_CYAN << "     *  SERVER STATUS CHECK  *     "
+              << "|" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n";
     httplib::Client client(Config::Server::HOST, server.getPort());
-
-    if(server.status() == Config::ServerStatus::ONLINE) {
-        std::cout << "Connected to server at port: " << server.getPort() << std::endl;
-        if(auto res = client.Get("/checkConnection")) {
-            if(res->status == 200) {
-                std::cout << "Server is running." << std::endl;
-            } else {
-                std::cout << "Server is not responding, but status is ONLINE." << std::endl;
-            }
+    if (server.status() == Config::ServerStatus::ONLINE) {
+        std::cout << TerminalStyle::GREEN << "Connected to server at port: " << server.getPort() << TerminalStyle::RESET << std::endl;
+        if (auto res = client.Get("/checkConnection")) {
+            std::cout << (res->status == 200 ? TerminalStyle::GREEN + std::string("Server is running.") : TerminalStyle::RED + std::string("Server is not responding, but status is ONLINE.")) << TerminalStyle::RESET << std::endl;
         } else {
-            std::cout << "Error connecting to server " << std::endl;
+            std::cout << TerminalStyle::RED << "Error connecting to server" << TerminalStyle::RESET << std::endl;
         }
     } else {
-        std::cout << "Not connected to server." << std::endl;
-        if(auto res = client.Get("/checkConnection")) {
-            if(res->status == 200) {
-                std::cout << "Server is running, but status is OFFLINE." << std::endl;
-            } else {
-                std::cout << "Server is not responding." << std::endl;
-            }
+        std::cout << TerminalStyle::RED << "Not connected to server." << TerminalStyle::RESET << std::endl;
+        if (auto res = client.Get("/checkConnection")) {
+            std::cout << (res->status == 200 ? TerminalStyle::YELLOW + std::string("Server is running, but status is OFFLINE.") : TerminalStyle::RED + std::string("Server is not responding.")) << TerminalStyle::RESET << std::endl;
         } else {
-            std::cout << "Error connecting to server " << std::endl;
+            std::cout << TerminalStyle::RED << "Error connecting to server" << TerminalStyle::RESET << std::endl;
         }
     }
+    std::cout << TerminalStyle::YELLOW << "\n+--------------------------------------+" << TerminalStyle::RESET << std::endl;
 }
 
 void Services::startServerMode(AppServer& server) {
-    std::cout << "Starting server mode..." << std::endl;
     try {
         server.start();
         std::cout << "Server started on port: " << server.getPort() << std::endl;
@@ -61,13 +63,10 @@ void Services::startServerMode(AppServer& server) {
 }
 
 void Services::stopServerMode(AppServer& server) {
-    std::cout << "Stopping server mode..." << std::endl;
     try {
         server.stop();
-        std::cout << "Server stopped." << std::endl;
-        // Atualiza o port do AppServer após parar, para sincronizar com o config
         server.updatePort(Config::Server::PORT);
-        std::cout << "Server port updated to: " << server.getPort() << std::endl;
+        std::cout << "Server stopped. Port updated to: " << server.getPort() << std::endl;
     } catch(const std::exception& e) {
         std::cerr << "Error stopping server: " << e.what() << std::endl;
     }
@@ -80,103 +79,130 @@ void Services::startClientMode() {
 
 // Function to change the current server port
 void Services::changeCurrentPort(AppServer& server) {
-    std::cout << "Current configured port: " << Config::Server::PORT;
-    if(Config::Server::PORT == Config::Default::PORT) {
-        std::cout << " (Default)" << std::endl;
-    } else {
-        std::cout << std::endl;
-    }
-    std::cout << "Server port: ";
-    if(server.status() == Config::ServerStatus::ONLINE) {
-        std::cout << server.getPort() << std::endl;
-    } else {
-        std::cout << "Server not started." << std::endl;
-    }
+    clearTerminal();
+    std::cout << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "|" << TerminalStyle::BG_CYAN << "     *  CHANGE CURRENT PORT  *     "
+              << "|" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n";
+    std::cout << TerminalStyle::BOLD << "Current configured port: " << TerminalStyle::CYAN << Config::Server::PORT << TerminalStyle::RESET << (Config::Server::PORT == Config::Default::PORT ? TerminalStyle::YELLOW + std::string(" (Default)") : "") << TerminalStyle::RESET << std::endl;
+    if(server.status() == Config::ServerStatus::ONLINE)
+        std::cout << TerminalStyle::BOLD << "Server port: " << TerminalStyle::CYAN << server.getPort() << TerminalStyle::RESET << std::endl;
+    else
+        std::cout << TerminalStyle::RED << "Server not started." << TerminalStyle::RESET << std::endl;
     int new_port;
-    std::cout << "Enter new port: ";
+    std::cout << TerminalStyle::BOLD << "Enter new port: " << TerminalStyle::RESET;
     while (!(std::cin >> new_port)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input. Enter a valid port: ";
+        std::cout << TerminalStyle::RED << "Invalid input. Enter a valid port: " << TerminalStyle::RESET;
     }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cout << "CHEGA AQUI" << new_port << std::endl;
     Config::set_port(new_port);
-
     if(server.status() == Config::ServerStatus::OFFLINE) {
         server.updatePort(new_port);
-        std::cout << "Server port updated to: " << server.getPort() << std::endl;
-    }
-
-    if(server.status() == Config::ServerStatus::ONLINE && server.getPort() != Config::Server::PORT) {
-        std::cout << "Server port is different from current port." << std::endl;
+        std::cout << TerminalStyle::GREEN << "Server port updated to: " << server.getPort() << TerminalStyle::RESET << std::endl;
+    } else if(server.getPort() != Config::Server::PORT) {
         char choice;
         do {
-            std::cout << "Update server port? (y/n): ";
+            std::cout << TerminalStyle::BOLD << "Update server port? (y/n): " << TerminalStyle::RESET;
             std::cin >> choice;
             if (choice == 'y' || choice == 'Y') {
                 server.updatePort(Config::Server::PORT);
-                std::cout << "Server port updated to: " << server.getPort() << std::endl;
-            } else {
-                std::cout << "Server port not updated." << std::endl;
+                std::cout << TerminalStyle::GREEN << "Server port updated to: " << server.getPort() << TerminalStyle::RESET << std::endl;
+            } else if (choice == 'n' || choice == 'N') {
+                std::cout << TerminalStyle::YELLOW << "Server port not updated." << TerminalStyle::RESET << std::endl;
             }
-        } while(choice != 'y' && choice != 'n');
+        } while(choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N');
     }
-    std::cout << "Port updated: " << Config::Server::PORT << std::endl;
+    std::cout << TerminalStyle::GREEN << "Port updated: " << Config::Server::PORT << TerminalStyle::RESET << std::endl;
+    std::cout << TerminalStyle::YELLOW << "\n+--------------------------------------+" << TerminalStyle::RESET << std::endl;
 }
 
 void Services::changeTargetPort(AppServer& server) {
-    std::cout << "Current target port: " << Config::Server::TARGER_PORT;
-    if(Config::Server::TARGER_PORT == Config::Default::TARGET_PORT) {
-        std::cout << " (Default)" << std::endl;
-    } else {
-        std::cout << std::endl;
-    }
-    std::cout << "Enter new target port: ";
+    clearTerminal();
+    std::cout << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "|" << TerminalStyle::BG_CYAN << "    *  CHANGE DESTINATION PORT  *   "
+              << "|" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n";
+    std::cout << TerminalStyle::BOLD << "Current target port: " << TerminalStyle::CYAN << Config::Server::TARGER_PORT << TerminalStyle::RESET << (Config::Server::TARGER_PORT == Config::Default::TARGET_PORT ? TerminalStyle::YELLOW + std::string(" (Default)") : "") << TerminalStyle::RESET << std::endl;
+    std::cout << TerminalStyle::BOLD << "Enter new target port: " << TerminalStyle::RESET;
     int new_port;
     while (!(std::cin >> new_port)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid input. Enter a valid port: ";
+        std::cout << TerminalStyle::RED << "Invalid input. Enter a valid port: " << TerminalStyle::RESET;
     }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     Config::set_target_port(new_port);
-    std::cout << "Target port updated to: " << Config::Server::TARGER_PORT << std::endl;
+    std::cout << TerminalStyle::GREEN << "Target port updated to: " << Config::Server::TARGER_PORT << TerminalStyle::RESET << std::endl;
+    std::cout << TerminalStyle::YELLOW << "\n+--------------------------------------+" << TerminalStyle::RESET << std::endl;
 }
 
 void Services::editUsername(Chat& chat) {
-    std::cout << "Current username: " << Config::User::USERNAME << std::endl;
-    std::cout << "Enter new username: ";
+    clearTerminal();
+    std::cout << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "|" << TerminalStyle::BG_CYAN << "        *  EDIT USERNAME  *        "
+              << "|" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n";
+    std::cout << TerminalStyle::BOLD << "Current username: " << TerminalStyle::CYAN << Config::User::USERNAME << TerminalStyle::RESET << std::endl;
+    std::cout << TerminalStyle::BOLD << "Enter new username: " << TerminalStyle::RESET;
     std::string new_username;
     std::cin >> new_username;
     try {
         Config::set_username(new_username);
-        std::cout << "Username updated to: " << Config::User::USERNAME << std::endl;
+        std::cout << TerminalStyle::GREEN << "Username updated to: " << Config::User::USERNAME << TerminalStyle::RESET << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "Error updating username: " << e.what() << std::endl;
+        std::cerr << TerminalStyle::RED << "Error updating username: " << e.what() << TerminalStyle::RESET << std::endl;
     }
     chat.changeUsernames(Config::User::USERNAME);
+    std::cout << TerminalStyle::YELLOW << "\n+--------------------------------------+" << TerminalStyle::RESET << std::endl;
 }
 
 void Services::generateRSAKeys() {
-    std::cout << "Generating RSA keys..." << std::endl;
+    clearTerminal();
+    std::cout << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "|" << TerminalStyle::BG_CYAN << "      *  GENERATE RSA KEYS  *      "
+              << "|" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n";
+    std::cout << TerminalStyle::BOLD << "Generating RSA keys..." << TerminalStyle::RESET << std::endl;
     try {
         RSA::Keys keys = RSA::generate_keys();
         Config::User::PUBLIC_KEY.n = keys.public_key.n;
         Config::User::PUBLIC_KEY.e = keys.public_key.e;
         Config::User::PRIVATE_KEY.n = keys.private_key.n;
         Config::User::PRIVATE_KEY.d = keys.private_key.d;
+        std::cout << TerminalStyle::GREEN << "RSA keys generated successfully!" << TerminalStyle::RESET << std::endl;
     } catch(const std::exception& e) {
-        std::cerr << "Error generating RSA keys: " << e.what() << std::endl;
+        std::cerr << TerminalStyle::RED << "Error generating RSA keys: " << e.what() << TerminalStyle::RESET << std::endl;
     }
-
+    std::cout << TerminalStyle::YELLOW << "\n+--------------------------------------+" << TerminalStyle::RESET << std::endl;
 }
 
 void Services::showPortsInfo(AppServer& server) {
-    std::cout << "\n--- Ports Info ---" << std::endl;
-    std::cout << "Config::Server::PORT: " << Config::Server::PORT << std::endl;
-    std::cout << "Config::Server::TARGER_PORT: " << Config::Server::TARGER_PORT << std::endl;
-    std::cout << "Server (runtime) port: " << server.getPort() << std::endl;
+    clearTerminal();
+    std::cout << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "|" << TerminalStyle::BG_CYAN << "        *  PORTS INFO  *         "
+              << "|" << TerminalStyle::RESET << "\n"
+              << TerminalStyle::BOLD
+              << "+--------------------------------------+" << TerminalStyle::RESET << "\n";
+    std::cout << TerminalStyle::BOLD << "Config::Server::PORT: " << TerminalStyle::CYAN << Config::Server::PORT << TerminalStyle::RESET << std::endl;
+    std::cout << TerminalStyle::BOLD << "Config::Server::TARGER_PORT: " << TerminalStyle::CYAN << Config::Server::TARGER_PORT << TerminalStyle::RESET << std::endl;
+    std::cout << TerminalStyle::BOLD << "Server (runtime) port: " << TerminalStyle::CYAN << server.getPort() << TerminalStyle::RESET << std::endl;
+    std::cout << TerminalStyle::YELLOW << "\n+--------------------------------------+" << TerminalStyle::RESET << std::endl;
 }
 
 void Services::generateUserId() {
@@ -186,4 +212,8 @@ void Services::generateUserId() {
         ss << std::hex << std::setw(2) << std::setfill('0') << rd() % 256;
     }
     Config::User::USER_ID = ss.str();
+}
+
+void Services::clearTerminal() {
+    std::system(CLEAR_COMMAND);
 }

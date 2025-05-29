@@ -49,6 +49,9 @@ namespace Config {
         inline constexpr const char* HOST = "localhost";
         extern int TARGER_PORT;
         inline constexpr const char* TARGET_HOST = "localhost";
+        inline RSA::PublicKey TARGET_PUBLIC_KEY;
+        inline std::string TARGET_USER_ID;
+        inline std::string TARGET_USERNAME;
     }
 
     namespace Routes {

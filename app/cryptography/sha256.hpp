@@ -2,6 +2,10 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <cstring>
 
 class SHA256 {
 public:

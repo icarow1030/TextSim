@@ -5,6 +5,9 @@
 #include <iostream>
 #include <nlohmann/json.hpp> // For JSON parsing
 #include "../chat/chat.hpp"
+#include "../config/config.hpp"
+#include <httplib.h>
+#include <gmp.h>
 
 // - Start Server Mode
 // - Start Client Mode (Chat)
@@ -30,4 +33,5 @@ namespace Services {
     void generateRSAKeys();
     void showPortsInfo(AppServer& server);
     void generateUserId();
+    void clearTerminal();
 }

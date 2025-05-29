@@ -1,7 +1,4 @@
 #include "rsa.hpp"
-#include <gmp.h>
-#include <time.h>
-#include <stdlib.h>
 
 RSA::Keys RSA::generate_keys() {
     gmp_randstate_t randstate;
@@ -44,7 +41,16 @@ mpz_class RSA::encrypt(const std::string& message, const PublicKey& pubkey) {
 std::string RSA::decrypt(const mpz_class& encrypted, const PrivateKey& privkey) {
     mpz_class m;
     mod_exp(m, encrypted, privkey.d, privkey.n);
-    return mpz_to_string(m);
+    
+    // Calcula o tamanho necessário para o buffer
+    size_t count = (mpz_sizeinbase(m.get_mpz_t(), 2) + 7) / 8;
+    std::vector<unsigned char> buffer(count);
+    
+    // Exporta os bytes
+    mpz_export(buffer.data(), &count, 1, 1, 0, 0, m.get_mpz_t());
+    
+    // Converte para string
+    return std::string(buffer.begin(), buffer.begin() + count);
 }
 
 void RSA::random_odd_512(mpz_class& result, gmp_randstate_t randstate) {

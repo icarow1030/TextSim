@@ -1,9 +1,13 @@
 #pragma once
 #include <httplib.h>
-#include "../config/config.hpp"
-#include <string>
+#include <memory>
 #include <iostream>
+#include <string>
+#include <stdexcept>
 #include <thread>
+#include <nlohmann/json.hpp> // For JSON parsing
+#include "../chat/chat.hpp"
+#include "../config/config.hpp"
 
 // Forward declaration for Chat
 class Chat;
@@ -13,6 +17,7 @@ class AppServer {
     public:
         AppServer(Chat& chatRef);
 
+        void handshakeHandle();
         void start();
         void stop();
         void setupRoutes();

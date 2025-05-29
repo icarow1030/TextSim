@@ -1,9 +1,4 @@
-#include <cstdint>
 #include "sha256.hpp"
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <cstring>
 
 const uint32_t SHA256::K[64] = {
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,

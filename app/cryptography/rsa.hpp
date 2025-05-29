@@ -2,6 +2,11 @@
 #include <iostream>
 #include <gmpxx.h>
 #include <string>
+#include <gmp.h>
+#include <time.h>
+#include <stdlib.h>
+#include <vector>
+
 
 class RSA {
 public:

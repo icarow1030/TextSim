@@ -5,6 +5,10 @@
 #include <nlohmann/json.hpp> // For JSON parsing
 #include "../cryptography/rsa.hpp"
 #include "../cryptography/sha256.hpp"
+#include <string>
+#include <iostream>
+#include <memory>
+#include "../server/AppServer.hpp"
 
 using namespace nlohmann;
 
@@ -14,7 +18,7 @@ class AppServer;
 class AppClient {
     public:
         AppClient();
-        bool handshake(); // Perform a handshake with the target server - Authentication and RSA Keys
+        void handshakeSend(const std::string target_host, const int target_port); // Perform a handshake with the target server - Authentication and RSA Keys
         httplib::Result sendMessage(json message); // Send a message to the server
         Config::ClientStatus status(); // Get the client status
         void setServerPtr(AppServer* ptr) { server_ptr = ptr; } // Set the server pointer
