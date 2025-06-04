@@ -50,10 +50,3 @@
 2. Execute `TextSim.exe`
 3. Use o menu para iniciar o servidor ou conectar-se a outro
 4. Aproveite um chat seguro via terminal!
-
----
-
-## 👨‍💻 Desenvolvido por
-
-**Ícaro Gabriel Andrade Santos**  
-Estudante de Ciência da Computação e entusiasta de redes, criptografia e desenvolvimento de sistemas.
