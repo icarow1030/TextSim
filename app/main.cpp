@@ -47,11 +47,10 @@ void showMenu(AppServer& server) {
               << "| USERNAME: " << TerminalStyle::CYAN << Config::User::USERNAME << TerminalStyle::YELLOW << TerminalStyle::BOLD << std::setw(23 - (int)Config::User::USERNAME.size()) << " " << "|" << TerminalStyle::RESET << "\n";
     std::cout << TerminalStyle::BOLD
               << "+--------------------------------------+" << TerminalStyle::RESET << "\n\n";
-    std::cout << TerminalStyle::BOLD << "[1] " << TerminalStyle::RESET << (isServerOnline(server) ? "Disconnect from Target Port" : "Connect to Target Port") << std::endl;
-    std::cout << TerminalStyle::BOLD << "[2] " << TerminalStyle::RESET << (isServerOnline(server) ? "Stop Server Mode" : "Start Server Mode") << std::endl;
-    std::cout << TerminalStyle::BOLD << "[3] " << TerminalStyle::RESET << "Start Client Mode (Chat)" << std::endl;
-    std::cout << TerminalStyle::BOLD << "[4] " << TerminalStyle::RESET << "Connection Settings" << std::endl;
-    std::cout << TerminalStyle::BOLD << "[5] " << TerminalStyle::RESET << "User Settings" << std::endl;
+    std::cout << TerminalStyle::BOLD << "[1] " << TerminalStyle::RESET << (isServerOnline(server) ? "Stop Server Mode" : "Start Server Mode") << std::endl;
+    std::cout << TerminalStyle::BOLD << "[2] " << TerminalStyle::RESET << "Start Client Mode (Chat)" << std::endl;
+    std::cout << TerminalStyle::BOLD << "[3] " << TerminalStyle::RESET << "Connection Settings" << std::endl;
+    std::cout << TerminalStyle::BOLD << "[4] " << TerminalStyle::RESET << "User Settings" << std::endl;
     std::cout << TerminalStyle::BOLD << "[0] " << TerminalStyle::RESET << "Exit" << std::endl;
     std::cout << TerminalStyle::YELLOW << "+--------------------------------------+" << TerminalStyle::RESET << std::endl;
 }
@@ -79,19 +78,15 @@ int main() {
         std::cin >> option;
         switch (option) {
             case 1:
-                std::cout << (isServerOnline(server) ? "Disconnecting..." : "Connecting...") << std::endl;
-                (isServerOnline(server)) ? Services::disconnectFromServer(server) : Services::connectToTargetAsConfig();
-                break;
-            case 2:
                 std::cout << (isServerOnline(server) ? "Stopping server mode..." : "Starting server mode...") << std::endl;
                 (isServerOnline(server)) ? Services::stopServerMode(server) : Services::startServerMode(server);
                 break;
-            case 3:
+            case 2:
                 std::cout << "Starting client mode (chat)..." << std::endl;
                 client.handshakeSend(Config::Server::TARGET_HOST, Config::Server::TARGER_PORT);
                 chat.chat(client);
                 break;
-            case 4: {
+            case 3: {
                 int suboption = -1;
                 while (suboption != 0) {
                     clearTerminal();
@@ -136,7 +131,7 @@ int main() {
                 }
                 break;
             }
-            case 5: {
+            case 4: {
                 int suboption = -1;
                 while (suboption != 0) {
                     clearTerminal();
