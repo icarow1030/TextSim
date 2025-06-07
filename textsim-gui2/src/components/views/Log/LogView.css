@@ -1,0 +1,114 @@
+/* src/components/views/Log/LogView.css */
+.log-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* NOVO: Estilo para o cabeçalho para alinhar título e botões */
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.log-header h2 {
+  margin: 0;
+}
+
+/* NOVO: Container para os botões de ação */
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* MUDANÇA: Estilo de botão genérico */
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--sidebar-bg);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.action-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* Estilo específico para o botão de Limpar */
+.clear-log-btn {
+  color: var(--red);
+  border-color: var(--red);
+}
+.clear-log-btn:hover {
+  background-color: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
+/* NOVO: Estilo específico para o botão de PDF */
+.pdf-btn {
+  color: var(--green);
+  border-color: var(--green);
+}
+.pdf-btn:hover {
+  background-color: var(--green);
+  color: white;
+  border-color: var(--green);
+}
+
+/* NOVO: Estilo para o ícone dentro do botão */
+.btn-icon {
+  height: 16px;
+  width: auto;
+}
+
+
+/* --- Estilos do container de logs (sem alterações) --- */
+.log-container {
+  background-color: var(--bg-dark);
+  font-family: 'Courier New', Courier, monospace;
+  padding: 15px;
+  border-radius: 8px;
+  flex-grow: 1;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.log-entry {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.log-timestamp {
+  color: var(--text-dark);
+}
+
+.log-level {
+  font-weight: bold;
+}
+
+.level-info {
+  color: var(--blue);
+}
+
+.level-crypto {
+  color: var(--yellow);
+}
+
+.level-network {
+  color: var(--green);
+}

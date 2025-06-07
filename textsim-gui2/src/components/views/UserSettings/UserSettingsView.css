@@ -1,0 +1,88 @@
+/* Estilos compartilhados podem ser movidos para um arquivo CSS global de "settings" depois */
+.settings-view {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.settings-card {
+  background-color: var(--sidebar-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden; /* Garante que os cantos do header fiquem arredondados */
+}
+
+.card-header {
+  background-color: rgba(255, 255, 255, 0.03);
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+
+.card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.form-group input {
+  background-color: var(--main-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+.info-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-dark);
+}
+
+.info-group strong {
+  color: var(--text-light);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.card-footer {
+  padding: 20px;
+  display: flex;
+  justify-content: flex-end; /* Alinha o botão à direita */
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.action-btn.save-btn { background-color: var(--accent-color); }
+.action-btn.check-btn { background-color: var(--yellow); color: var(--bg-dark); }

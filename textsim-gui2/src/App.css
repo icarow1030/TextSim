@@ -1,0 +1,51 @@
+/* src/App.css */
+:root {
+  --bg-dark: #1a1d21;
+  --sidebar-bg: #22262b;
+  --main-bg: #101214;
+  --text-light: #e6e6e6;
+  --text-dark: #b0b0b0;
+  --accent-color: #00aaff;
+  --border-color: #363b42;
+  --green: #28a745;
+  --red: #dc3545;
+  --blue: #007bff;
+  --yellow: #ffc107;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--main-bg);
+  color: var(--text-light);
+  overflow: hidden;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Scrollbar personalizada para o app inteiro */
+::-webkit-scrollbar {
+  width: 10px;
+  background: var(--main-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sidebar-bg);
+  border-radius: 8px;
+  border: 2px solid var(--main-bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+::-webkit-scrollbar-corner {
+  background: var(--main-bg);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sidebar-bg) var(--main-bg);
+}

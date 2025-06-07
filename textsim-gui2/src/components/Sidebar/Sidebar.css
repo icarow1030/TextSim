@@ -1,0 +1,160 @@
+/* src/components/Sidebar/Sidebar.css */
+.sidebar {
+  background-color: var(--sidebar-bg);
+  width: 240px;
+  transition: width 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.sidebar.minimized {
+  width: 80px;
+}
+
+/* --- Estilos do Cabeçalho (Logo) --- */
+.logo-container {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 25px;
+  gap: 20px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: var(--text-dark);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.toggle-btn:hover {
+  color: var(--text-light);
+}
+
+.sidebar-app-name {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--accent-color);
+  white-space: nowrap;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.2s ease-out, transform 0.3s ease-in-out;
+}
+
+.sidebar.minimized .sidebar-app-name {
+  opacity: 0;
+  transform: translateX(-20px);
+  pointer-events: none; 
+}
+
+
+/* --- Estilos da Lista de Navegação --- */
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Faz a lista ocupar todo o espaço disponível, empurrando o rodapé para baixo */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.nav-item a {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  text-decoration: none;
+  color: var(--text-dark);
+  gap: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-item.active a {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.nav-item:not(.active) a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-light);
+}
+
+.nav-icon {
+  font-size: 1.5rem;
+  min-width: 30px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+
+.nav-text {
+  transition: opacity 0.2s;
+  opacity: 1;
+}
+
+.sidebar.minimized .nav-text {
+  opacity: 0;
+  width: 0;
+}
+
+.sidebar.minimized .nav-item a {
+  justify-content: flex-start;
+}
+
+/* --- Estilos do Rodapé (Créditos) --- */
+.sidebar-footer {
+  margin-top: auto; /* Empurra para o final, pois .nav-list tem flex-grow: 1 */
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.sidebar-footer a {
+  display: flex;
+  align-items: center;
+  padding: 20px 25px;
+  text-decoration: none;
+  color: var(--text-dark);
+  gap: 20px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-footer a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.footer-text-container {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.2s ease-out, transform 0.3s ease-in-out;
+}
+
+.footer-title {
+  color: var(--text-light);
+  font-weight: bold;
+}
+
+.footer-author {
+  font-size: 0.8rem;
+  color: var(--text-dark);
+}
+
+.sidebar.minimized .footer-text-container {
+  opacity: 0;
+  transform: translateX(-20px);
+  pointer-events: none;
+}

@@ -1,0 +1,140 @@
+/* src/components/views/ServerView.css */
+
+/* O cartão principal que contém tudo */
+.server-card {
+  background-color: var(--sidebar-bg);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  margin: auto; /* Centraliza o cartão na tela */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espaçamento entre as seções */
+  border: 1px solid var(--border-color);
+}
+
+.card-header h2 {
+  margin: 0;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 1.8rem;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Container principal do status (bolinha + texto) */
+.status-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* A bolinha de status com animação de pulso */
+.status-indicator {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.status-indicator.online {
+  background-color: var(--green);
+  box-shadow: 0 0 15px var(--green);
+  animation: pulse 2s infinite; /* Animação de pulso */
+}
+
+.status-indicator.offline {
+  background-color: var(--red);
+  box-shadow: 0 0 15px var(--red);
+}
+
+/* Animação de pulso para o status online */
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
+}
+
+/* O texto "Online" / "Offline" */
+.status-text {
+  font-size: 2rem;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+.status-text.online { color: var(--green); }
+.status-text.offline { color: var(--red); }
+
+
+/* Seção de detalhes adicionais */
+.server-details {
+  display: flex;
+  gap: 30px;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detail-item strong {
+  color: var(--text-light);
+  font-weight: normal;
+}
+
+
+/* Rodapé do cartão com o botão */
+.card-footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Botão de ação com ícone */
+.server-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 200px;
+  transition: all 0.2s ease-in-out;
+}
+
+.server-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.server-toggle-btn.start-btn {
+  background-color: var(--green);
+}
+
+.server-toggle-btn.stop-btn {
+  background-color: var(--red);
+}
