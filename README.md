@@ -59,9 +59,12 @@ This repository currently contains two main artifacts, which you can find on the
 
 ---
 
-###  roadmap Future Work: The Integration
+###  `roadmap Future Work: The Integration`
 
-The next major milestone for this project is the full integration of the C++ backend with the new Tauri desktop UI. This will be achieved using **Tauri's sidecar pattern**, where the native desktop shell will manage and communicate with the C++ executable in the background. This will bring all the core cryptographic features to the modern user interface, completing the project's vision.
+- The next major milestone for this project is the **full integration of the C++ backend** with the **new Tauri desktop UI**. This will be achieved using **Tauri's sidecar pattern**, where the native desktop shell will manage and communicate with the C++ executable in the background. This will bring all the core cryptographic features to the modern user interface, completing the project's vision.
+- **English Language UI** (UI Prototype still in PT-BR)
+- **Better UI**
+- **PDF Report Generation** with educational texts in English and PT-BR.
 
 ---
 
